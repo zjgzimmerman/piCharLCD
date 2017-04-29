@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import RPi.GPIO as GPIO
 
 # Interfacing a raspberry pi with a character LCD screen through GPIO
 
@@ -23,3 +24,20 @@
 ##########################################
 
 class piCharLCD:
+	def __init__(self, rs, rw, en, db):
+		# GPIO pin numbers
+		self.rs = rs # Register select
+		self.rw = rw # read/write select
+		self.en = en # Enable
+		self.db = db # Data bit list (0-7)
+
+		# Get GPIO pins ready
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(rs, GPIO.OUT)
+		GPIO.setup(rw, GPIO.OUT)
+		GPIO.setup(en, GPIO.OUT)
+		for pin in db:
+			GPIO.setup(pin, GPIO.OUT)
+
+	def cleanup():
+		GPIO.cleanup()
