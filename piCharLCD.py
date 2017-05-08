@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 import RPi.GPIO as GPIO
+import time
+import binascii
 
 # Interfacing a raspberry pi with a character LCD screen through GPIO
 
@@ -24,20 +26,31 @@ import RPi.GPIO as GPIO
 ##########################################
 
 class piCharLCD:
-	def __init__(self, rs, rw, en, db):
+	rs = 0
+	rw = 0
+	en = 0
+	dbPins = []
+	dbVal = [0, 0, 0, 0, 0, 0, 0, 0]
+	def __init__(self, rs, rw, en, dbPins):
+		GPIO.setmode(GPIO.BCM)
 		# GPIO pin numbers
 		self.rs = rs # Register select
 		self.rw = rw # read/write select
 		self.en = en # Enable
-		self.db = db # Data bit list (0-7)
+		self.dbPins = dbPins # Data bit list (0-7)
 
 		# Get GPIO pins ready
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(rs, GPIO.OUT)
 		GPIO.setup(rw, GPIO.OUT)
 		GPIO.setup(en, GPIO.OUT)
-		for pin in db:
+		for pin in dbPins:
 			GPIO.setup(pin, GPIO.OUT)
+
+	def enPulse():
+		GPIO.output(en, True)
+		time.sleep(1/1000) #Leave enable high for a millisecond
+		GPIO.output(en, False)
 
 	def cleanup():
 		GPIO.cleanup()
