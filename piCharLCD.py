@@ -26,31 +26,44 @@ import binascii
 ##########################################
 
 class piCharLCD:
-	rs = 0
-	rw = 0
-	en = 0
+	rsPin = 0
+	rwPin = 0
+	enPin = 0
+	rsVal, rwVal, enVal = 0
 	dbPins = []
 	dbVal = [0, 0, 0, 0, 0, 0, 0, 0]
 	def __init__(self, rs, rw, en, dbPins):
 		GPIO.setmode(GPIO.BCM)
 		# GPIO pin numbers
-		self.rs = rs # Register select
-		self.rw = rw # read/write select
-		self.en = en # Enable
+		self.rsPin = rs # Register select
+		self.rwPin = rw # read/write select
+		self.enPin = en # Enable
 		self.dbPins = dbPins # Data bit list (0-7)
 
 		# Get GPIO pins ready
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(rs, GPIO.OUT)
-		GPIO.setup(rw, GPIO.OUT)
-		GPIO.setup(en, GPIO.OUT)
+		GPIO.setup(rsPin, GPIO.OUT)
+		GPIO.setup(rwPin, GPIO.OUT)
+		GPIO.setup(enPin, GPIO.OUT)
 		for pin in dbPins:
 			GPIO.setup(pin, GPIO.OUT)
 
 	def enPulse():
-		GPIO.output(en, True)
+		GPIO.output(enPin, True)
 		time.sleep(1/1000) #Leave enable high for a millisecond
-		GPIO.output(en, False)
+		GPIO.output(enPin, False)
+
+	def isBusy():
+		pass
+		#Function to check state of DB7 to see if it is set to busy
+		#Set RS to 0 and RW to 1, then get DB7 state
+		GPIO.output(rsPin, False)
+		GPIO.output(rwPin, True)
+
+	#Returns list of 8 bits for ascii value of input
+	def asciiToBin(char):
+		outData = [x for x in bin(ord(char))[2:].zfill(8)]
+		return outData
 
 	def cleanup():
 		GPIO.cleanup()
